@@ -23,7 +23,8 @@ LD_FLAGS := -X github.com/goharbor/harbor/src/pkg/version.ReleaseVersion=$(HARBO
 	-X github.com/goharbor/harbor/src/pkg/version.GitCommit=$(GIT_COMMIT) \
 	-X github.com/goharbor/harbor/src/pkg/version.BuildDate=$(BUILD_DATE)
 
-GO_BUILD_FLAGS := -ldflags "$(LD_FLAGS)"
+# Added -trimpath to remove local build paths from binaries (better for reproducible builds)
+GO_BUILD_FLAGS := -trimpath -ldflags "$(LD_FLAGS)"
 
 .PHONY: all build test lint clean docker-build docker-push help
 
@@ -86,10 +87,4 @@ docker-push: docker-build
 clean:
 	@echo "Cleaning build artifacts..."
 	rm -rf $(BIN_DIR) $(DIST_DIR) coverage.out coverage.html
-	@echo "Clean complete."
-
-## tidy: Tidy Go module dependencies
-tidy:
-	go mod tidy
-
-## vendor: U
+	@echo
