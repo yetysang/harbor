@@ -49,7 +49,8 @@ test:
 ## test-short: Run short unit tests (skip integration)
 test-short:
 	@echo "Running short unit tests..."
-	go test -short -v ./src/...
+	# NOTE: using -count=1 to disable test result caching, useful during local dev
+	go test -short -v -count=1 ./src/...
 
 ## lint: Run linters
 lint:
@@ -91,8 +92,4 @@ clean:
 tidy:
 	go mod tidy
 
-## vendor: Update vendor directory
-vendor:
-	go mod vendor
-
-## help: S
+## vendor: U
