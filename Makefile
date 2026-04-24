@@ -10,7 +10,8 @@ HARBOR_VERSION ?= $(shell cat VERSION 2>/dev/null || echo "dev")
 GIT_COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 BUILD_DATE ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-REGISTRY ?= goharbor
+# Use personal registry by default instead of goharbor
+REGISTRY ?= myusername
 IMAGE_TAG ?= $(HARBOR_VERSION)
 
 # Build output directory
@@ -94,7 +95,4 @@ tidy:
 vendor:
 	go mod vendor
 
-## help: Show this help message
-help:
-	@echo "Harbor Makefile targets:"
-	@sed -n 's/^## //p' $(MAKEFILE_LIST) | column -t -s ':' | sed -e 's/^/  /'
+## help: S
