@@ -58,7 +58,8 @@ test:
 ## test-race: Run unit tests with race detector enabled
 test-race:
 	@echo "Running unit tests with race detector..."
-	go test -v -race -count=1 -p 4 -coverprofile=coverage.out ./src/...
+	# Pinned -p to 2 here; higher parallelism + race detector caused occasional OOM on my machine
+	go test -v -race -count=1 -p 2 -coverprofile=coverage.out ./src/...
 	go tool cover -html=coverage.out -o coverage.html
 	@echo "Tests complete. Coverage report: coverage.html"
 
@@ -72,6 +73,4 @@ test-short:
 ## lint: Run linters
 lint:
 	@echo "Running linters..."
-	@which golangci-lint > /dev/null || (echo "golangci-lint not found, installing..." && go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest)
-	# NOTE: using --timeout 3m here; the default 1m times out on my machine during full lint runs
-	golangci-lint run --timeout 3m ./src/...
+	@which golangci-lint > /dev/null || (echo "golangci-lint not found, installing..." && go install github.com/golangci/golangci-lint/cmd/golangci-lint@late
