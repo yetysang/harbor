@@ -24,7 +24,11 @@ LD_FLAGS := -X github.com/goharbor/harbor/src/pkg/version.ReleaseVersion=$(HARBO
 	-X github.com/goharbor/harbor/src/pkg/version.BuildDate=$(BUILD_DATE)
 
 # Added -trimpath to remove local build paths from binaries (better for reproducible builds)
+# Added -race detector flag during development; remove for production builds
 GO_BUILD_FLAGS := -trimpath -ldflags "$(LD_FLAGS)"
+
+# Use -p to run package tests in parallel; set to number of CPU cores available
+GO_TEST_FLAGS := -v -race -count=1 -p 4 -coverprofile=coverage.out
 
 .PHONY: all build test lint clean docker-build docker-push help
 
@@ -43,7 +47,7 @@ build:
 ## test: Run unit tests
 test:
 	@echo "Running unit tests..."
-	go test -v -race -coverprofile=coverage.out ./src/...
+	go test $(GO_TEST_FLAGS) ./src/...
 	go tool cover -html=coverage.out -o coverage.html
 	@echo "Tests complete. Coverage report: coverage.html"
 
@@ -84,7 +88,4 @@ docker-push: docker-build
 	docker push $(REGISTRY)/harbor-registryctl:$(IMAGE_TAG)
 
 ## clean: Remove build artifacts
-clean:
-	@echo "Cleaning build artifacts..."
-	rm -rf $(BIN_DIR) $(DIST_DIR) coverage.out coverage.html
-	@echo
+clean
