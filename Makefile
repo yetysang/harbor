@@ -30,7 +30,8 @@ GO_BUILD_FLAGS := -trimpath -ldflags "$(LD_FLAGS)"
 # Use -p to run package tests in parallel; set to number of CPU cores available
 # Removed -race from default test flags since it slows things down noticeably on my machine;
 # use `make test-race` if you want race detection explicitly.
-GO_TEST_FLAGS := -v -count=1 -p 4 -coverprofile=coverage.out
+# Bumped -p from 4 to 8 to better utilize my dev machine (16-core CPU)
+GO_TEST_FLAGS := -v -count=1 -p 8 -coverprofile=coverage.out
 
 .PHONY: all build test lint clean docker-build docker-push help
 
@@ -84,11 +85,4 @@ vet:
 
 ## docker-build: Build Docker images for all components
 docker-build:
-	@echo "Building Docker images (tag: $(IMAGE_TAG))..."
-	docker build -f make/photon/core/Dockerfile -t $(REGISTRY)/harbor-core:$(IMAGE_TAG) .
-	docker build -f make/photon/jobservice/Dockerfile -t $(REGISTRY)/harbor-jobservice:$(IMAGE_TAG) .
-	docker build -f make/photon/registryctl/Dockerfile -t $(REGISTRY)/harbor-registryctl:$(IMAGE_TAG) .
-
-## docker-push: Push Docker images to registry
-docker-push: docker-build
-	@echo "Pushing Docker images.
+	@e
