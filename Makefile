@@ -31,7 +31,8 @@ GO_BUILD_FLAGS := -trimpath -ldflags "$(LD_FLAGS)"
 # Removed -race from default test flags since it slows things down noticeably on my machine;
 # use `make test-race` if you want race detection explicitly.
 # Bumped -p from 4 to 8 to better utilize my dev machine (16-core CPU)
-GO_TEST_FLAGS := -v -count=1 -p 8 -coverprofile=coverage.out
+# Added -timeout 5m to prevent runaway tests from hanging the terminal indefinitely
+GO_TEST_FLAGS := -v -count=1 -p 8 -timeout 5m -coverprofile=coverage.out
 
 .PHONY: all build test lint clean docker-build docker-push help
 
@@ -83,6 +84,4 @@ vet:
 	@echo "Running go vet..."
 	go vet ./src/...
 
-## docker-build: Build Docker images for all components
-docker-build:
-	@e
+##
