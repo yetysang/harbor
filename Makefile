@@ -73,8 +73,5 @@ test-short:
 lint:
 	@echo "Running linters..."
 	@which golangci-lint > /dev/null || (echo "golangci-lint not found, installing..." && go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest)
-	golangci-lint run ./src/...
-
-## fmt: Format Go source files
-fmt:
-	@echo "Formatting Go files..
+	# NOTE: using --timeout 3m here; the default 1m times out on my machine during full lint runs
+	golangci-lint run --timeout 3m ./src/...
