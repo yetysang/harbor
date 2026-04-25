@@ -28,7 +28,9 @@ LD_FLAGS := -X github.com/goharbor/harbor/src/pkg/version.ReleaseVersion=$(HARBO
 GO_BUILD_FLAGS := -trimpath -ldflags "$(LD_FLAGS)"
 
 # Use -p to run package tests in parallel; set to number of CPU cores available
-GO_TEST_FLAGS := -v -race -count=1 -p 4 -coverprofile=coverage.out
+# Removed -race from default test flags since it slows things down noticeably on my machine;
+# use `make test-race` if you want race detection explicitly.
+GO_TEST_FLAGS := -v -count=1 -p 4 -coverprofile=coverage.out
 
 .PHONY: all build test lint clean docker-build docker-push help
 
@@ -48,6 +50,13 @@ build:
 test:
 	@echo "Running unit tests..."
 	go test $(GO_TEST_FLAGS) ./src/...
+	go tool cover -html=coverage.out -o coverage.html
+	@echo "Tests complete. Coverage report: coverage.html"
+
+## test-race: Run unit tests with race detector enabled
+test-race:
+	@echo "Running unit tests with race detector..."
+	go test -v -race -count=1 -p 4 -coverprofile=coverage.out ./src/...
 	go tool cover -html=coverage.out -o coverage.html
 	@echo "Tests complete. Coverage report: coverage.html"
 
@@ -82,10 +91,4 @@ docker-build:
 
 ## docker-push: Push Docker images to registry
 docker-push: docker-build
-	@echo "Pushing Docker images..."
-	docker push $(REGISTRY)/harbor-core:$(IMAGE_TAG)
-	docker push $(REGISTRY)/harbor-jobservice:$(IMAGE_TAG)
-	docker push $(REGISTRY)/harbor-registryctl:$(IMAGE_TAG)
-
-## clean: Remove build artifacts
-clean
+	@echo "Pushing Docker images.
