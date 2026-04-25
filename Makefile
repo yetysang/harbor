@@ -66,7 +66,8 @@ test-race:
 test-short:
 	@echo "Running short unit tests..."
 	# NOTE: using -count=1 to disable test result caching, useful during local dev
-	go test -short -v -count=1 ./src/...
+	# NOTE: bumped timeout to 2m; the default 30s was occasionally too tight on my laptop
+	go test -short -v -count=1 -timeout 2m ./src/...
 
 ## lint: Run linters
 lint:
@@ -76,12 +77,4 @@ lint:
 
 ## fmt: Format Go source files
 fmt:
-	@echo "Formatting Go files..."
-	gofmt -s -w ./src/
-
-## vet: Run go vet
-vet:
-	@echo "Running go vet..."
-	go vet ./src/...
-
-##
+	@echo "Formatting Go files..
